@@ -81,7 +81,7 @@ class FrequencyDomainTestCase(unittest.TestCase):
             method="welch",
             nperseg=256,
             noverlap=128,
-            window="hanning",
+            window="hann",
         )
         expected = {
             "total_power": 3602.89,
@@ -112,7 +112,7 @@ class FrequencyDomainTestCase(unittest.TestCase):
             method="welch",
             nperseg=256,
             noverlap=128,
-            window="hanning",
+            window="hann",
         )
 
         _welch.assert_called_once_with(
@@ -121,7 +121,7 @@ class FrequencyDomainTestCase(unittest.TestCase):
             detrend=False,
             noverlap=128,
             nperseg=256,
-            window="hanning",
+            window="hann",
         )
 
     @mock.patch("hrv.classical._auc")
@@ -138,12 +138,12 @@ class FrequencyDomainTestCase(unittest.TestCase):
             method="welch",
             nperseg=256,
             noverlap=128,
-            window="hanning",
+            window="hann",
         )
 
         _interpolate_rri.assert_not_called()
         _welch.assert_called_once_with(
-            x=fake_rri, fs=4, detrend=False, noverlap=128, nperseg=256, window="hanning"
+            x=fake_rri, fs=4, detrend=False, noverlap=128, nperseg=256, window="hann"
         )
 
     def test_area_under_the_curve(self):

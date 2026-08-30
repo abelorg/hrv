@@ -1,6 +1,11 @@
 # coding: utf-8
 import numpy as np
 
+try:  # numpy >= 2.0
+    from numpy import trapezoid as _trapezoid
+except ImportError:  # numpy < 2.0
+    from numpy import trapz as _trapezoid
+
 from scipy.signal import welch
 from spectrum import pburg
 
@@ -103,7 +108,7 @@ def frequency_domain(
     frequency bands. The PSD can be estimated using non-parametric
     (FFT - Welch's method) or parametric (Autoregressive - Burg's method)
     approaches. The AUC is calculated using the trapezoidal method
-    (numpy.trapz).
+    (numpy.trapezoid / numpy.trapz).
 
     Parameters
     ----------
@@ -214,9 +219,9 @@ def _auc(fxx, pxx, vlf_band, lf_band, hf_band):
     lf_indexes = np.logical_and(fxx >= lf_band[0], fxx < lf_band[1])
     hf_indexes = np.logical_and(fxx >= hf_band[0], fxx < hf_band[1])
 
-    vlf = np.trapz(y=pxx[vlf_indexes], x=fxx[vlf_indexes])
-    lf = np.trapz(y=pxx[lf_indexes], x=fxx[lf_indexes])
-    hf = np.trapz(y=pxx[hf_indexes], x=fxx[hf_indexes])
+    vlf = _trapezoid(y=pxx[vlf_indexes], x=fxx[vlf_indexes])
+    lf = _trapezoid(y=pxx[lf_indexes], x=fxx[lf_indexes])
+    hf = _trapezoid(y=pxx[hf_indexes], x=fxx[hf_indexes])
     total_power = vlf + lf + hf
     lf_hf = lf / hf
     lfnu = (lf / (total_power - vlf)) * 100
